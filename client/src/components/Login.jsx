@@ -10,6 +10,7 @@ const Login = ({ onLogin, onSwitch }) => {
   const handleLogin = () => {
     // Simulate email/password login (Firebase EmailAuth can be added here if needed)
     onLogin({ email });
+    window.open('/dashboard')
   };
 
   const handleGoogleLogin = async () => {
@@ -27,13 +28,16 @@ const Login = ({ onLogin, onSwitch }) => {
     try {
       const result = await signInWithPopup(auth, facebookProvider);
       onLogin(result.user);
+      window.open('/dashboard')
     } catch (error) {
       console.error("Facebook login error:", error.message);
+      window.open('/')
     }
   };
 
   return (
-    <div className="login-card">
+    <div  className="min-h-screen flex items-center justify-center">
+    <div className="login-card  flex flex-row justify-center align-middle">
       <h2>LOGIN</h2>
       <input
         type="email"
@@ -53,13 +57,13 @@ const Login = ({ onLogin, onSwitch }) => {
         </span>
       </div>
 
-      <button className="btn login-btn" onClick={handleLogin}>Login</button>
-      <button className="btn google" onClick={handleGoogleLogin}>
-        <FaGoogle style={{ marginRight: "8px" }} />
+      <button className="btn login-btn " onClick={handleLogin}>Login</button>
+      <button className="btn google flex flex-row gap-12" onClick={handleGoogleLogin}>
+        <FaGoogle className="mt-1" />
         Login with Google
       </button>
-      <button className="btn facebook" onClick={handleFacebookLogin}>
-        <FaFacebook style={{ marginRight: "8px" }} />
+      <button className="btn facebook flex flex-row gap-12" onClick={handleFacebookLogin}>
+        <FaFacebook className="mt-1"/>
         Login with Facebook
       </button>
 
@@ -67,6 +71,7 @@ const Login = ({ onLogin, onSwitch }) => {
         <p onClick={onSwitch}>Create account</p>
         <p className="forgot">Forgot password?</p>
       </div>
+    </div>
     </div>
   );
 };

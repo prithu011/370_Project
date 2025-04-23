@@ -103,6 +103,12 @@ input {
 .google {
   background: white;
   color: black;
+  margin-top: 10;
+  top: 10%;
+}
+.icon{
+  font-size: 1rem;
+  margin-top: px
 }
 
 .facebook {
