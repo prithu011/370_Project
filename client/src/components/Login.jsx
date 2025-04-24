@@ -8,7 +8,7 @@ const Login = ({ onLogin, onSwitch }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleLogin = () => {
-    // Simulate email/password login (Firebase EmailAuth can be added here if needed)
+    
     onLogin({ email });
     window.open('/dashboard')
   };
