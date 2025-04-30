@@ -1,10 +1,10 @@
-// src/App.jsx
+
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import FootballDashboard from "./components/FootballDashboard";
-import Login from "./components/Login";
-import Register from "./components/register";
-import Logout from "./components/Logout";
+import FootballDashboard from "./components/Dashboard/FootballDashboard";
+import Login from "./components/UserManagment/Login";
+import Register from "./components/UserManagment/register";
+import Logout from "./components/UserManagment/Logout";
 import "./App.css";
 
 function App() {
