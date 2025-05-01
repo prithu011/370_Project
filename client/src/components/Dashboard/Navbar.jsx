@@ -24,7 +24,7 @@ const DashboardNavbar = () => {
           <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center font-bold">
             ⚽
           </div>
-          <span className="text-xl font-semibold">Dashboard</span>
+          <span className="text-xl font-semibold">{user.name}</span>
         </div>
 
         <div className="flex items-center space-x-4">

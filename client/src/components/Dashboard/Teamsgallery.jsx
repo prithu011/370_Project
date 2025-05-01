@@ -42,9 +42,9 @@ const teams = [
     url: 'https://www.psg.fr/',
   },
   {
-    name: 'Juventus',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/5/51/Juventus_FC_2017_logo.png',
-    url: 'https://www.juventus.com/',
+    name: 'Atletico Madrid',
+    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c1/Atletico_Madrid_logo.svg/252px-Atletico_Madrid_logo.svg.png?20120407223229',
+    url: 'https://en.atleticodemadrid.com/',
   },
   {
     name: 'Bayern Munich',
@@ -65,7 +65,7 @@ const teams = [
 
 const TeamGallery = () => {
   return (
-    <div className="bg-gray-100 py-4">
+    <div className="bg-black py-4">
       <h2 className="text-xl font-bold mb-4 text-center">Top Football Teams</h2>
       <div className="flex overflow-x-auto space-x-8 px-4">
         {teams.map((team, index) => (
