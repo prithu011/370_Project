@@ -17,7 +17,7 @@ const DashboardNavbar = () => {
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
-        navigate("/"); 
+        navigate("/");
       })
       .catch((error) => {
         console.error("Logout error:", error.message);
@@ -26,7 +26,8 @@ const DashboardNavbar = () => {
 
   return (
     <div>
-      <nav className="flex justify-between items-center bg-gray-800 text-white px-6 py-4 shadow-lg relative">
+      {/* Floating Navbar */}
+      <nav className="fixed top-0 left-0 w-full flex justify-between items-center bg-gray-800 text-white px-6 py-4 shadow-lg z-50">
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setShowSidebar(!showSidebar)}
@@ -79,7 +80,7 @@ const DashboardNavbar = () => {
         </div>
       </nav>
 
-     
+      {/* Sidebar */}
       <div
         className={`fixed top-0 left-0 h-full w-64 bg-gray-900 text-white transform ${
           showSidebar ? "translate-x-0" : "-translate-x-full"
@@ -97,7 +98,6 @@ const DashboardNavbar = () => {
               </li>
             ))}
 
-            
             <li
               className="bg-red-600 hover:bg-red-700 p-2 rounded-md cursor-pointer transition-colors text-center"
               onClick={() => setShowSidebar(false)}
@@ -107,6 +107,9 @@ const DashboardNavbar = () => {
           </ul>
         </div>
       </div>
+
+      {/* Spacer to prevent content from hiding behind navbar */}
+      <div className="h-[72px]"></div>
     </div>
   );
 };

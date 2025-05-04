@@ -1,12 +1,21 @@
 import React, { useState } from "react";
+import axios from "axios";
+import API_BASE_URL from "../../config";
 
 const Register = ({ onRegister, onSwitch }) => {
   const [formData, setFormData] = useState({ first: "", last: "", email: "", password: "" });
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleRegister = () => {
-    onRegister({ email: formData.email });
+  const handleRegister = async () => {
+    try {
+      await axios.post(`${API_BASE_URL}/api/register`, formData);
+      onRegister({ email: formData.email });
+      alert("Account created successfully!");
+    } catch (error) {
+      console.error("Register error:", error.message);
+      alert("Failed to create account. Please try again.");
+    }
   };
 
   return (

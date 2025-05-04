@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaGoogle, FaFacebook } from "react-icons/fa";
 import { auth, googleProvider, facebookProvider, signInWithPopup } from "../../firebaseConfig";
+import axios from "axios";
+import API_BASE_URL from "../../config";
 
 const useInterval = (callback, delay) => {
   const savedCallback = React.useRef();
@@ -23,11 +25,22 @@ const Login = ({ onLogin, onSwitch }) => {
   const [role, setRole] = useState("user"); 
   const [user, setUser] = useState(null);
 
-  const handleLogin = () => {
-    const userData = { email, role };
-    onLogin(userData);
-
-    window.open('/dashboard', '_self');
+  const handleLogin = async () => {
+    try {
+      const details = {
+        email: email,
+        role: role,
+      }
+      // console.log(role, email)
+      const response = await axios.post(`${API_BASE_URL}/api/login`,details );
+      const userData = response.data.user;
+      onLogin(userData);
+      console.log("Login successful:", userData);
+      window.open("/dashboard", "_self");
+    } catch (error) {
+      console.error("Login error:", error.response?.data?.message || error.message);
+      alert("Login failed. Please try again.");
+    }
   };
 
   const handleGoogleLogin = async () => {
@@ -39,12 +52,14 @@ const Login = ({ onLogin, onSwitch }) => {
         name: googleUser.displayName,
         role: role, 
       };
+      await axios.post(`${API_BASE_URL}/api/google-login`, userData);
       setUser(googleUser);
       onLogin(userData);
+      console.log("Google login successful:", userData);
       window.open('/dashboard', '_self');
     } catch (error) {
-      console.error("Google login error:", error.message);
-      window.open('/', '_self');
+      console.error("Google login error:", error.response?.data?.message || error.message);
+      alert("Google login failed. Please try again.");
     }
   };
 
