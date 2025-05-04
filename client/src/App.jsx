@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import FootballDashboard from "./components/Dashboard/FootballDashboard";
@@ -6,10 +5,11 @@ import Login from "./components/UserManagment/Login";
 import Register from "./components/UserManagment/register";
 import Logout from "./components/UserManagment/Logout";
 import "./App.css";
+import News from "./components/Transfer/News";
 
 function App() {
   const [backendData, setBackendData] = useState([{}]);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(true);
   const [showRegister, setShowRegister] = useState(false);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ function App() {
           <Route
             path="/"
             element={
-              !user ? (
+              user ? (
                 showRegister ? (
                   <Register onRegister={setUser} onSwitch={() => setShowRegister(false)} />
                 ) : (
@@ -38,10 +38,10 @@ function App() {
               )
             }
           />
-          <Route
-            path="/dashboard"
-            element={ <FootballDashboard />}
-          />
+          <Route path="/dashboard" element={<FootballDashboard />} />
+
+          
+          <Route path="/transfer" element={user ? <News /> : <Navigate to="/" />} />
         </Routes>
       </div>
 

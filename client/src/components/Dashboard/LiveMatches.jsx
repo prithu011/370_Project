@@ -16,7 +16,7 @@ const LiveMatches = () => {
       );
       const data = await response.json();
       if (data.response) {
-        setMatches(data.response.slice(0, 10)); // Show first 8 live matches
+        setMatches(data.response.slice(0, 10)); 
       }
     } catch (error) {
       console.error("Error fetching live matches:", error);
@@ -25,7 +25,7 @@ const LiveMatches = () => {
 
   useEffect(() => {
     fetchLiveMatches();
-    const interval = setInterval(fetchLiveMatches, 30000); // refresh every 30s
+    const interval = setInterval(fetchLiveMatches, 30000); 
     return () => clearInterval(interval);
   }, []);
 

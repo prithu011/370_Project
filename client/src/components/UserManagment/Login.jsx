@@ -20,12 +20,13 @@ const Login = ({ onLogin, onSwitch }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [role, setRole] = useState("user"); // NEW: role state
+  const [role, setRole] = useState("user"); 
   const [user, setUser] = useState(null);
 
   const handleLogin = () => {
     const userData = { email, role };
     onLogin(userData);
+
     window.open('/dashboard', '_self');
   };
 
@@ -36,7 +37,7 @@ const Login = ({ onLogin, onSwitch }) => {
       const userData = {
         email: googleUser.email,
         name: googleUser.displayName,
-        role: role, // Use selected role
+        role: role, 
       };
       setUser(googleUser);
       onLogin(userData);
@@ -54,10 +55,11 @@ const Login = ({ onLogin, onSwitch }) => {
       const userData = {
         email: fbUser.email,
         name: fbUser.displayName,
-        role: role, // Use selected role
+        role: role, 
       };
       setUser(fbUser);
       onLogin(userData);
+      
       window.open('/dashboard', '_self');
     } catch (error) {
       console.error("Facebook login error:", error.message);
@@ -93,7 +95,7 @@ const Login = ({ onLogin, onSwitch }) => {
           </span>
         </div>
 
-        {/* New Role Selector */}
+        
         <div>
           <label className="text-sm">Select Role:</label>
           <select

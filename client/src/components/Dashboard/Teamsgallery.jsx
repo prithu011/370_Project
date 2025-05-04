@@ -1,5 +1,4 @@
 import React from 'react';
-
 const teams = [
   {
     name: 'Barcelona',
@@ -65,28 +64,32 @@ const teams = [
 
 const TeamGallery = () => {
   return (
-    <div className="bg-black py-4">
-      <h2 className="text-xl font-bold mb-4 text-center">Top Football Teams</h2>
-      <div className="flex overflow-x-auto space-x-8 px-4">
-        {teams.map((team, index) => (
-          <a
-            key={index}
-            href={team.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-col items-center min-w-[100px] hover:scale-105 transition-transform"
-          >
-            <img
-              src={team.logo}
-              alt={team.name}
-              className="w-16 h-16 object-contain mb-2"
-            />
-            <span className="text-sm font-medium text-center text-blue-700 hover:underline">
-              {team.name}
-            </span>
-          </a>
-        ))}
+    <div className="bg-black py-4 overflow-hidden relative">
+      <h2 className="text-xl font-bold mb-4 text-center text-white">Top Football Teams</h2>
+      <div className="marquee whitespace-nowrap">
+        <div className="inline-flex animate-marquee space-x-8 px-4">
+          {teams.concat(teams).map((team, index) => (
+            <a
+              key={index}
+              href={team.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center min-w-[100px] hover:scale-105 transition-transform"
+            >
+              <img
+                src={team.logo}
+                alt={team.name}
+                className="w-16 h-16 object-contain mb-2"
+              />
+              <span className="text-sm font-medium text-center text-blue-400 hover:underline">
+                {team.name}
+              </span>
+            </a>
+          ))}
+        </div>
       </div>
+
+
     </div>
   );
 };
