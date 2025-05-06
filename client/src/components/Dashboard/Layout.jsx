@@ -5,11 +5,8 @@ import Navbar from "./Navbar";
 const Layout = () => {
   return (
     <>
-      {/* Fixed Navbar */}
       <Navbar />
-
-      {/* Page content below the navbar */}
-      <main className=" px-2">
+      <main className="px-2">
         <Outlet />
       </main>
     </>

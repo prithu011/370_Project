@@ -39,4 +39,4 @@ const updateUserSession = async (email) => {
   }
 };
 
-module.exports = { addUser, updateUserSession };
+module.exports = { addUser, updateUserSession, pool };

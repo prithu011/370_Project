@@ -1,0 +1,63 @@
+.club-container {
+    padding: 1rem;
+  }
+  
+  .club-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: white; /* Ensure the title text is white */
+  }
+  
+  .club-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  
+  .club-table th,
+  .club-table td {
+    padding: 0.5rem;
+    border: 1px solid #d1d5db; /* Tailwind gray-300 */
+    text-align: center;
+  }
+  
+  .club-table thead {
+    background-color: #333; /* Dark background for header */
+    color: white; /* White text for header */
+  }
+  
+  .club-table tbody tr:nth-child(even) {
+    background-color: #444; /* Slightly darker row background for even rows */
+  }
+  
+  .club-table tbody tr:nth-child(odd) {
+    background-color: #555; /* Slightly lighter row background for odd rows */
+  }
+  
+  .club-table td {
+    color: white; /* Ensure table data is white */
+  }
+  
+  .club-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.375rem;
+    font-size: 0.9rem;
+    background-color: #333; /* Dark background for search input */
+    color: white; /* White text for the search input */
+  }
+  
+  .search-input::placeholder {
+    color: #aaa; /* Lighter placeholder text for contrast */
+  }
+  

@@ -22,19 +22,33 @@ const Login = ({ onLogin, onSwitch }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [role, setRole] = useState("user"); 
+  const [role, setRole] = useState("user");
   const [user, setUser] = useState(null);
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+
     try {
       const details = {
-        email: email,
-        role: role,
-      }
-      // console.log(role, email)
-      const response = await axios.post(`${API_BASE_URL}/api/login`,details );
+        email,
+        password,
+        role,
+        name: email, 
+      };
+
+      const response = await axios.post(`${API_BASE_URL}/api/login`, details);
       const userData = response.data.user;
+
+      auth.currentUser = {
+        displayName: userData.name || userData.email || "User",
+        email: userData.email,
+      };
+
       onLogin(userData);
+      setUser(auth.currentUser);
       console.log("Login successful:", userData);
       window.open("/dashboard", "_self");
     } catch (error) {
@@ -49,8 +63,8 @@ const Login = ({ onLogin, onSwitch }) => {
       const googleUser = result.user;
       const userData = {
         email: googleUser.email,
-        name: googleUser.displayName,
-        role: role, 
+        name: googleUser.email, 
+        role,
       };
       await axios.post(`${API_BASE_URL}/api/google-login`, userData);
       setUser(googleUser);
@@ -69,12 +83,11 @@ const Login = ({ onLogin, onSwitch }) => {
       const fbUser = result.user;
       const userData = {
         email: fbUser.email,
-        name: fbUser.displayName,
-        role: role, 
+        name: fbUser.email, 
+        role,
       };
       setUser(fbUser);
       onLogin(userData);
-      
       window.open('/dashboard', '_self');
     } catch (error) {
       console.error("Facebook login error:", error.message);
@@ -110,7 +123,6 @@ const Login = ({ onLogin, onSwitch }) => {
           </span>
         </div>
 
-        
         <div>
           <label className="text-sm">Select Role:</label>
           <select
