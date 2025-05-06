@@ -683,6 +683,7 @@ const Change = (arr) => {
       let h = null
       let i = element[8]
       let j = element[9]
+
       newArr.push([a, b, c, d, e, f, g, h, i, j])
     }
   }
