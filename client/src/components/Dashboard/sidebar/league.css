@@ -1,0 +1,56 @@
+.league-list-container {
+  padding: 20px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.league-list-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.filters-container {
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  margin-bottom: 10px;
+}
+
+.filter-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.table-auto {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table-header th {
+  background-color: #10172a;
+
+  padding: 12px;
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+  white-space: nowrap;
+}
+
+.table-body td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+}
+
+.table-body tr:hover {
+  background-color: #10172a;
+}

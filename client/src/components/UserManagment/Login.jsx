@@ -1,34 +1,40 @@
-import React, { useState } from "react";
-import { FaEye, FaEyeSlash, FaGoogle, FaFacebook } from "react-icons/fa";
-import { auth, googleProvider, facebookProvider, signInWithPopup } from "../../firebaseConfig";
-import axios from "axios";
-import API_BASE_URL from "../../config";
+import React, { useState } from 'react'
+import { FaEye, FaEyeSlash, FaGoogle, FaFacebook } from 'react-icons/fa'
+import {
+  auth,
+  googleProvider,
+  facebookProvider,
+  signInWithPopup,
+} from '../../firebaseConfig'
+import axios from 'axios'
+import API_BASE_URL from '../../config'
 
 const useInterval = (callback, delay) => {
-  const savedCallback = React.useRef();
+  const savedCallback = React.useRef()
   React.useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
+    savedCallback.current = callback
+  }, [callback])
 
   React.useEffect(() => {
     if (delay !== null) {
-      const id = setInterval(() => savedCallback.current(), delay);
-      return () => clearInterval(id);
+      const id = setInterval(() => savedCallback.current(), delay)
+      return () => clearInterval(id)
     }
-  }, [delay]);
-};
+  }, [delay])
+}
 
 const Login = ({ onLogin, onSwitch }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [role, setRole] = useState("user");
-  const [user, setUser] = useState(null);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [passwordVisible, setPasswordVisible] = useState(false)
+  const [role, setRole] = useState('user')
+  const [user, setUser] = useState(null)
 
+  // Update the handleLogin function
   const handleLogin = async () => {
     if (!email || !password) {
-      alert("Please enter both email and password.");
-      return;
+      alert('Please enter both email and password.')
+      return
     }
 
     try {
@@ -36,70 +42,86 @@ const Login = ({ onLogin, onSwitch }) => {
         email,
         password,
         role,
-        name: email, 
-      };
+        name: email,
+      }
+      const response = await axios.post(`${API_BASE_URL}/api/login`, details)
+      const userData = response.data.user
 
-      const response = await axios.post(`${API_BASE_URL}/api/login`, details);
-      const userData = response.data.user;
+      // Store email in localStorage
+      localStorage.setItem('userEmail', userData.email)
 
       auth.currentUser = {
-        displayName: userData.name || userData.email || "User",
+        displayName: userData.name || userData.email || 'User',
         email: userData.email,
-      };
+      }
 
-      onLogin(userData);
-      setUser(auth.currentUser);
-      console.log("Login successful:", userData);
-      window.open("/dashboard", "_self");
+      onLogin(userData)
+      setUser(auth.currentUser)
+      console.log('Login successful:', userData)
+      window.open('/dashboard', '_self')
     } catch (error) {
-      console.error("Login error:", error.response?.data?.message || error.message);
-      alert("Login failed. Please try again.");
+      console.error(
+        'Login error:',
+        error.response?.data?.message || error.message
+      )
+      alert('Login failed. Please try again.')
     }
-  };
+  }
 
+  // Update Google login to store email
   const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const googleUser = result.user;
+      const result = await signInWithPopup(auth, googleProvider)
+      const googleUser = result.user
       const userData = {
         email: googleUser.email,
-        name: googleUser.email, 
+        name: googleUser.email,
         role,
-      };
-      await axios.post(`${API_BASE_URL}/api/google-login`, userData);
-      setUser(googleUser);
-      onLogin(userData);
-      console.log("Google login successful:", userData);
-      window.open('/dashboard', '_self');
+      }
+
+      // Store email in localStorage
+      localStorage.setItem('userEmail', googleUser.email)
+
+      await axios.post(`${API_BASE_URL}/api/google-login`, userData)
+      setUser(googleUser)
+      onLogin(userData)
+      console.log('Google login successful:', userData)
+      window.open('/dashboard', '_self')
     } catch (error) {
-      console.error("Google login error:", error.response?.data?.message || error.message);
-      alert("Google login failed. Please try again.");
+      console.error(
+        'Google login error:',
+        error.response?.data?.message || error.message
+      )
+      alert('Google login failed. Please try again.')
     }
-  };
+  }
 
   const handleFacebookLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, facebookProvider);
-      const fbUser = result.user;
+      const result = await signInWithPopup(auth, facebookProvider)
+      const fbUser = result.user
       const userData = {
         email: fbUser.email,
-        name: fbUser.email, 
+        name: fbUser.email,
         role,
-      };
-      setUser(fbUser);
-      onLogin(userData);
-      window.open('/dashboard', '_self');
+      }
+      setUser(fbUser)
+      onLogin(userData)
+      window.open('/dashboard', '_self')
     } catch (error) {
-      console.error("Facebook login error:", error.message);
-      window.open('/', '_self');
+      console.error('Facebook login error:', error.message)
+      window.open('/', '_self')
     }
-  };
+  }
 
-  useInterval(() => {
-    if (user) {
-      console.log(`Checking session for ${user.displayName}`);
-    }
-  }, user ? 10000 : null);
+  useInterval(
+    () => {
+      if (user) {
+        console.log(`Checking session for ${user.displayName}`)
+      }
+    },
+    user ? 10000 : null
+  )
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -113,12 +135,15 @@ const Login = ({ onLogin, onSwitch }) => {
         />
         <div className="password-wrapper">
           <input
-            type={passwordVisible ? "text" : "password"}
+            type={passwordVisible ? 'text' : 'password'}
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <span className="eye-icon" onClick={() => setPasswordVisible(!passwordVisible)}>
+          <span
+            className="eye-icon"
+            onClick={() => setPasswordVisible(!passwordVisible)}
+          >
             {passwordVisible ? <FaEyeSlash /> : <FaEye />}
           </span>
         </div>
@@ -136,13 +161,21 @@ const Login = ({ onLogin, onSwitch }) => {
           </select>
         </div>
 
-        <button className="btn login-btn" onClick={handleLogin}>Login</button>
-        <button className="btn google flex flex-row gap-12" onClick={handleGoogleLogin}>
+        <button className="btn login-btn" onClick={handleLogin}>
+          Login
+        </button>
+        <button
+          className="btn google flex flex-row gap-12"
+          onClick={handleGoogleLogin}
+        >
           <FaGoogle className="mt-1" />
           Login with Google
         </button>
-        <button className="btn facebook flex flex-row gap-12" onClick={handleFacebookLogin}>
-          <FaFacebook className="mt-1"/>
+        <button
+          className="btn facebook flex flex-row gap-12"
+          onClick={handleFacebookLogin}
+        >
+          <FaFacebook className="mt-1" />
           Login with Facebook
         </button>
 
@@ -152,7 +185,7 @@ const Login = ({ onLogin, onSwitch }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

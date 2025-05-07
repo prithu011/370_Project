@@ -4,20 +4,22 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import ManagerList from '../Dashboard/sidebar/ManagerList'
 import PlayerList from '../Dashboard/sidebar/playerlist'
 import ClubList from '../Dashboard/sidebar/ClubList'
+import LeagueList from '../Dashboard/sidebar/league'
+
 import './admin.css'
 
-const AdminPage = () => {
-  const [selectedTable, setSelectedTable] = useState(null) // Selected table name
-  const [tableData, setTableData] = useState([]) // Data for the selected table
-  const [userEmail, setUserEmail] = useState('') // Logged-in user's email
-  const [updatedRow, setUpdatedRow] = useState({}) // Row being updated
-  const [editingRowId, setEditingRowId] = useState(null) // ID of the row being edited
+const AdminPage = ({ props: x }) => {
+  const [selectedTable, setSelectedTable] = useState(null)
+  const [tableData, setTableData] = useState([])
+  const [userEmail, setUserEmail] = useState('')
+  const [updatedRow, setUpdatedRow] = useState({})
+  const [editingRowId, setEditingRowId] = useState(null)
+  console.log(x)
 
   const isAdmin = [
     'tanjum.ibnul.mahmud@g.bracu.ac.bd',
     'tohanahin121@gmail.com',
   ].includes(userEmail)
-
   // Fetch data for the selected table
   const fetchTableData = async (tableName) => {
     try {
@@ -35,7 +37,7 @@ const AdminPage = () => {
   const handleEditRow = (rowId) => {
     const rowToEdit = tableData.find((row) => row.id === rowId)
     setUpdatedRow(rowToEdit || {})
-    setEditingRowId(rowId) // Set the row ID being edited
+    setEditingRowId(rowId)
   }
 
   const handleInputChange = (key, value) => {
@@ -50,8 +52,8 @@ const AdminPage = () => {
         email: userEmail,
       })
       alert(`Row updated successfully in ${selectedTable}!`)
-      fetchTableData(selectedTable) // Refresh the table data
-      setEditingRowId(null) // Exit editing mode
+      fetchTableData(selectedTable)
+      setEditingRowId(null)
     } catch (error) {
       console.error(`Error updating row in ${selectedTable}:`, error)
       alert('Failed to update the row. Please check the constraints.')
@@ -90,10 +92,23 @@ const AdminPage = () => {
           <li>
             <button onClick={() => fetchTableData('Clubs')}>Clubs</button>
           </li>
+          <li>
+            <button onClick={() => fetchTableData('Leagues')}>Leagues</button>
+          </li>
         </ul>
       </div>
       {selectedTable === 'Managers' && (
         <ManagerList
+          data={tableData}
+          onEditRow={handleEditRow}
+          editingRowId={editingRowId}
+          updatedRow={updatedRow}
+          onInputChange={handleInputChange}
+          onSubmitUpdate={handleSubmitUpdate}
+        />
+      )}
+      {selectedTable === 'Leagues' && (
+        <LeagueList
           data={tableData}
           onEditRow={handleEditRow}
           editingRowId={editingRowId}
@@ -125,7 +140,8 @@ const AdminPage = () => {
       {selectedTable &&
         selectedTable !== 'Managers' &&
         selectedTable !== 'Players' &&
-        selectedTable !== 'Clubs' && (
+        selectedTable !== 'Clubs' &&
+        selectedTable !== 'Leagues' && (
           <div className="selected-table">
             <h2>Table: {selectedTable}</h2>
             <table>
@@ -155,15 +171,6 @@ const AdminPage = () => {
                         )}
                       </td>
                     ))}
-                    <td>
-                      {editingRowId === row.id ? (
-                        <button onClick={handleSubmitUpdate}>Save</button>
-                      ) : (
-                        <button onClick={() => handleEditRow(row.id)}>
-                          Edit
-                        </button>
-                      )}
-                    </td>
                     <td>
                       {editingRowId === row.id ? (
                         <button

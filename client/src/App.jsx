@@ -16,11 +16,14 @@ import PlayerList from './components/Dashboard/sidebar/playerlist'
 import ManagerList from './components/Dashboard/sidebar/ManagerList'
 import ClubList from './components/Dashboard/sidebar/ClubList'
 import AdminPage from './components/admin/admin'
+import League from './components/Dashboard/sidebar/league'
+
 // import AgentList from './components/Dashboard/sidebar/agent'
 
 import './App.css'
 
 function App() {
+  // eslint-disable-next-line no-unused-vars
   const [backendData, setBackendData] = useState([{}])
   const [user, setUser] = useState(true) // true for now
   const [showRegister, setShowRegister] = useState(false)
@@ -29,7 +32,7 @@ function App() {
     fetch('http://localhost:5000/api')
       .then((response) => response.json())
       .then((data) => setBackendData(data))
-  }, [backendData, setBackendData])
+  }, [])
 
   return (
     <Router>
@@ -74,6 +77,10 @@ function App() {
             <Route
               path="/manager"
               element={user ? <ManagerList /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/league"
+              element={user ? <League /> : <Navigate to="/" />}
             />
             <Route
               path="/home"

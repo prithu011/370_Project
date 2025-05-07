@@ -15,7 +15,7 @@ const fetchClubs = async (req, res) => {
         Club.user_id,
         Club.ucl_num,
         Club.league_trophy_num,
-        Manager.Name AS manager_name
+        COALESCE(Manager.Name, 'N/A') AS manager_name
       FROM Club
       LEFT JOIN Manager ON Club.Manager_id = Manager.Manager_id
       ORDER BY Club.club_name ASC;

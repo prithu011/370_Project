@@ -5,6 +5,7 @@ const { addUser, updateUserSession } = require('./Database/models/user')
 const fetchPlayers = require('./fetchingData/fetchPlayers')
 const fetchClubs = require('./fetchingData/fetchClubs')
 const fetchManagers = require('./fetchingData/fetchManagers')
+const fetchLeague = require('./fetchingData/fetchLeague')
 // const fetchAgents = require('./fetchingData/fetchAgents')
 const app = express()
 
@@ -85,6 +86,11 @@ app.get('/api/clubs', fetchClubs)
 
 // Fetch managers
 app.get('/api/managers', fetchManagers)
+
+// Admin routes
+app.use('/api/admin', adminRoutes)
+
+app.get('/api/leagues', fetchLeague)
 
 // // Route for fetching agent data
 // app.get('/api/agents', fetchAgents)

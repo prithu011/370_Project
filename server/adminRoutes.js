@@ -29,6 +29,18 @@ router.get('/fetchManagers', isAdmin, async (req, res) => {
     })
   }
 })
+// Fetch data from the "Leagues" table
+router.get('/fetchLeagues', isAdmin, async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM league')
+    res.status(200).json(rows)
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error fetching data from Leagues table',
+      error: error.message,
+    })
+  }
+})
 
 // Fetch data from the "Players" table
 router.get('/fetchPlayers', isAdmin, async (req, res) => {
@@ -56,51 +68,88 @@ router.get('/fetchClubs', isAdmin, async (req, res) => {
   }
 })
 
-// Update data in a specific table
-router.post('/table/:tableName', isAdmin, async (req, res) => {
-  const { tableName } = req.params
-  const { data } = req.body
+// Update data in the "Players" table
+router.post('/updatePlayers', isAdmin, async (req, res) => {
+  const updatedRow = req.body.data
 
   try {
-    const { id, ...updateData } = data
-    await pool.query(`UPDATE ?? SET ? WHERE id = ?`, [
-      tableName,
-      updateData,
-      id,
-    ])
-    res.status(200).json({ message: `Data updated in ${tableName}` })
+    const keys = Object.keys(updatedRow).filter((key) => key !== 'player_id')
+    const values = keys.map((key) => updatedRow[key])
+    const setClause = keys.map((key) => `${key} = ?`).join(', ')
+
+    const query = `UPDATE Players SET ${setClause} WHERE player_id = ?`
+    await pool.query(query, [...values, updatedRow.player_id])
+
+    res.status(200).json({ message: 'Player updated successfully' })
   } catch (error) {
-    res.status(500).json({
-      message: `Error updating data in ${tableName}`,
-      error: error.message,
-    })
+    console.error('Error updating player:', error)
+    res
+      .status(500)
+      .json({ message: 'Failed to update player', error: error.message })
   }
 })
-// Update a row in the selected table
-// router.post('/update:table', async (req, res) => {
-//   const { table } = req.params
-//   const { data } = req.body
 
-//   try {
-//     // Disable foreign key checks
-//     await pool.query('SET FOREIGN_KEY_CHECKS = 0')
+// Update data in the "Leagues" table
+router.post('/updateLeagues', isAdmin, async (req, res) => {
+  const updatedRow = req.body.data
 
-//     // Perform the update
-//     const keys = Object.keys(data)
-//     const values = Object.values(data)
-//     const updateQuery = `UPDATE ${table} SET ${keys
-//       .map((key) => `${key} = ?`)
-//       .join(', ')} WHERE id = ?`
-//     await pool.query(updateQuery, [...values, data.id])
+  try {
+    const keys = Object.keys(updatedRow).filter((key) => key !== 'League_id')
+    const values = keys.map((key) => updatedRow[key])
+    const setClause = keys.map((key) => `${key} = ?`).join(', ')
 
-//     // Re-enable foreign key checks
-//     await pool.query('SET FOREIGN_KEY_CHECKS = 1')
+    const query = `UPDATE league SET ${setClause} WHERE League_id = ?`
+    await pool.query(query, [...values, updatedRow.League_id])
 
-//     res.status(200).json({ message: 'Row updated successfully!' })
-//   } catch (error) {
-//     console.error('Error updating row:', error)
-//     res.status(500).json({ message: 'Failed to update row.', error })
-//   }
-// })
+    res.status(200).json({ message: 'League updated successfully' })
+  } catch (error) {
+    console.error('Error updating league:', error)
+    res
+      .status(500)
+      .json({ message: 'Failed to update league', error: error.message })
+  }
+})
+
+// Update data in the "Managers" table
+router.post('/updateManagers', isAdmin, async (req, res) => {
+  const updatedRow = req.body.data
+
+  try {
+    const keys = Object.keys(updatedRow).filter((key) => key !== 'manager_id')
+    const values = keys.map((key) => updatedRow[key])
+    const setClause = keys.map((key) => `${key} = ?`).join(', ')
+
+    const query = `UPDATE Managers SET ${setClause} WHERE manager_id = ?`
+    await pool.query(query, [...values, updatedRow.manager_id])
+
+    res.status(200).json({ message: 'Manager updated successfully' })
+  } catch (error) {
+    console.error('Error updating manager:', error)
+    res
+      .status(500)
+      .json({ message: 'Failed to update manager', error: error.message })
+  }
+})
+
+// Update data in the "Clubs" table
+router.post('/updateClubs', isAdmin, async (req, res) => {
+  const updatedRow = req.body.data
+
+  try {
+    const keys = Object.keys(updatedRow).filter((key) => key !== 'club_id')
+    const values = keys.map((key) => updatedRow[key])
+    const setClause = keys.map((key) => `${key} = ?`).join(', ')
+
+    const query = `UPDATE Clubs SET ${setClause} WHERE club_id = ?`
+    await pool.query(query, [...values, updatedRow.club_id])
+
+    res.status(200).json({ message: 'Club updated successfully' })
+  } catch (error) {
+    console.error('Error updating club:', error)
+    res
+      .status(500)
+      .json({ message: 'Failed to update club', error: error.message })
+  }
+})
 
 module.exports = router

@@ -13,6 +13,43 @@
   text-align: center; /* Center the title */
 }
 
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: #2d3748;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-input {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: #4a5568;
+  border: 1px solid #718096;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+}
+
+.filter-input::placeholder {
+  color: white;
+  opacity: 0.7;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #2196f3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
 .manager-table {
   width: 100%;
   border-collapse: collapse;

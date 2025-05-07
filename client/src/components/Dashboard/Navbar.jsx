@@ -199,8 +199,8 @@ const DashboardNavbar = () => {
             {showSidebar ? <FaTimes /> : <FaBars />}
           </button>
           <a
-            href="/"
-            className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center font-bold"
+            onClick={() => navigate('/home')}
+            className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center font-bold cursor-pointer"
           >
             ⚽
           </a>
