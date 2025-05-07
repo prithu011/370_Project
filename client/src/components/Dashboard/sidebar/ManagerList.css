@@ -1,0 +1,67 @@
+.manager-container {
+  padding: 1rem;
+  background-color: #10172a; /* Dark background for the container */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for the container */
+}
+
+.manager-title {
+  font-size: 2rem; /* Larger font size for the title */
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: white; /* White text for the title */
+  text-align: center; /* Center the title */
+}
+
+.manager-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem; /* Adjusted font size for better readability */
+  margin-top: 1rem;
+}
+
+.manager-table th,
+.manager-table td {
+  padding: 0.75rem; /* Increased padding for better spacing */
+  border: 1px solid #d1d5db; /* Light gray border */
+  text-align: center;
+}
+
+.manager-table thead {
+  background-color: #2b2b3b; /* Darker background for the header */
+  color: white; /* White text for the header */
+}
+
+.manager-table tbody tr {
+  background-color: #2b2b3b; /* Darker background for rows */
+}
+
+.manager-table tbody tr:nth-child(even) {
+  background-color: #1f2739; /* Slightly darker background for even rows */
+}
+
+.manager-table td {
+  color: white; /* White text for table data */
+}
+
+.manager-logo {
+  width: 64px; /* Slightly larger logo size */
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem; /* Increased padding for better usability */
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+  font-size: 1rem; /* Adjusted font size */
+  background-color: #2b2b3b; /* Darker background for the search input */
+  color: white; /* White text for the search input */
+}
+
+.search-input::placeholder {
+  color: #ccc; /* Lighter placeholder text for better contrast */
+}
