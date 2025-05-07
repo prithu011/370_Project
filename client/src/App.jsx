@@ -1,30 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+  BrowserRouter as Router,Routes,Route, Navigate,} from "react-router-dom";
 
 import FootballDashboard from "./components/Dashboard/FootballDashboard";
 import Login from "./components/UserManagment/Login";
 import Register from "./components/UserManagment/register";
 import Logout from "./components/UserManagment/Logout";
+import News from "./components/Transfer/News";
 import Layout from "./components/Dashboard/Layout";
 import PlayerList from "./components/Dashboard/sidebar/playerlist";
 import ManagerList from "./components/Dashboard/sidebar/ManagerList";
-import ClubList from "./components/Dashboard/sidebar/ClubList";
-// import Transfer from "./components/Transfer/Transfer";
-// import MyTeam from "./components/MyTeam/MyTeam";
 
 import "./App.css";
+import ClubList from "./components/Dashboard/sidebar/ClubList";
 
 function App() {
-  const [user, setUser] = useState(null); // null by default
+  const [backendData, setBackendData] = useState([{}]);
+  const [user, setUser] = useState(true); // true for now
   const [showRegister, setShowRegister] = useState(false);
 
   useEffect(() => {
-    // Optional: Auto-fetch user session from localStorage or backend
+    fetch("http://localhost:5000/api")
+      .then((response) => response.json())
+      .then((data) => setBackendData(data));
   }, []);
 
   return (
@@ -84,19 +82,14 @@ function App() {
               path="/club"
               element={user ? <ClubList /> : <Navigate to="/" />}
             />
-            {/* <Route
-              path="/transfer"
-              element={user ? <Transfer /> : <Navigate to="/" />}
-            />
-            <Route
-              path="/MyTeam"
-              element={user ? <MyTeam /> : <Navigate to="/" />}
-            /> */}
+            
+            
+            {/* Add more protected pages here later */}
           </Route>
         </Routes>
       </div>
     </Router>
-  );
+  )
 }
 
-export default App;
+export default App

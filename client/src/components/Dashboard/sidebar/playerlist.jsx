@@ -1,27 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import './playerList.css';
-import PlayerCard from '../../playercard/playercard';
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import './playerList.css'
+import PlayerCard from '../../playercard/playercard'
 
 const PlayerList = () => {
-  const [players, setPlayers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [players, setPlayers] = useState([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedPlayer, setSelectedPlayer] = useState(null)
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/players')
+    axios
+      .get('http://localhost:5000/api/players')
       .then((res) => setPlayers(res.data))
-      .catch((err) => console.error('Error fetching players:', err));
-  }, []);
+      .catch((err) => console.error('Error fetching players:', err))
+  }, [])
 
-  const filteredPlayers = players.filter(player => {
+  const filteredPlayers = players.filter((player) => {
     return (
-      (player.name && player.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (player.market_value && player.market_value.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (player.foot && player.foot.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (player.club_name && player.club_name.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-  });
+      (player.name &&
+        player.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (player.market_value &&
+        player.market_value.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (player.foot &&
+        player.foot.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (player.club_name &&
+        player.club_name.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+  })
 
   return (
     <div className="player-list-container">
@@ -61,16 +66,22 @@ const PlayerList = () => {
             </tr>
           </thead>
           <tbody className="table-body">
-            {filteredPlayers.map(player => (
+            {filteredPlayers.map((player) => (
               <tr key={player.player_id}>
-                <td><img src={player.image_url} alt={player.name} className="table-image" /></td>
+                <td>
+                  <img
+                    src={player.image_url}
+                    alt={player.name}
+                    className="table-image"
+                  />
+                </td>
                 <td>{player.name}</td>
                 <td>{player.position}</td>
                 <td>{player.player_nationality}</td>
                 <td>{player.player_jersey}</td>
                 <td>{player.age}</td>
                 <td>{player.foot}</td>
-                <td>{player.club_name}</td>
+                <td>{player.club_name || 'N/A'}</td>
                 <td>{player.matches}</td>
                 <td>{player.goals}</td>
                 <td>{player.assists}</td>
@@ -107,7 +118,7 @@ const PlayerList = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default PlayerList;
+export default PlayerList

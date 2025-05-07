@@ -5,60 +5,79 @@ const { addUser, updateUserSession, pool } = require('./Database/models/user');
 
 const app = express();
 
+
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true,
 }));
-
 app.use(bodyParser.json());
 
-// ✅ Basic test route
-app.get('/api', (req, res) => {
-  res.json({ users: ['userOne', 'userTwo', 'userThree'] });
-});
 
-// ✅ Auth Routes
+app.get('/api', (req, res) => {
+  res.json({ users: ['userOne', 'userTwo', 'userThree'] })
+})
+
 app.post('/api/login', async (req, res) => {
   try {
     const { email, role, name } = req.body;
-    const user = await addUser(email, role, name || email);
+    console.log(req.body);
+
+    
+    const user = await addUser(email, role, name || email); 
     res.status(200).json({ message: 'User logged in', user });
   } catch (error) {
-    res.status(500).json({ message: 'Error logging in user', error: error.message });
+    res
+      .status(500)
+      .json({ message: 'Error logging in user', error: error.message })
+  }
+})
+
+// User logout
+app.post('/api/logout', async (req, res) => {
+  const { email } = req.body
+  try {
+    await updateUserSession(email)
+    res.status(200).json({ message: 'User logged out' })
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: 'Error logging out user', error: error.message })
   }
 });
 
-app.post('/api/logout', async (req, res) => {
-  const { email } = req.body;
-  try {
-    await updateUserSession(email);
-    res.status(200).json({ message: 'User logged out' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error logging out user', error: error.message });
-  }
-});
 
 app.post('/api/google-login', async (req, res) => {
-  const { email, name, role } = req.body;
+  const { email, name, role } = req.body
   try {
+ 
     const user = await addUser(email, role, name || email);
     res.status(200).json({ message: 'Google user logged in', user });
   } catch (error) {
-    res.status(500).json({ message: 'Error logging in Google user', error: error.message });
+    res
+      .status(500)
+      .json({ message: 'Error logging in Google user', error: error.message })
   }
 });
+
 
 app.post('/api/register', async (req, res) => {
-  const { first, last, email, password } = req.body;
+  const { first, last, email, password } = req.body
   try {
-    const user = await addUser(email, 'user', `${first} ${last}`);
-    res.status(201).json({ message: 'User registered successfully', user });
+    const user = await addUser(email, 'user', `${first} ${last}`)
+    res.status(201).json({ message: 'User registered successfully', user })
   } catch (error) {
-    res.status(500).json({ message: 'Error registering user', error: error.message });
+    res
+      .status(500)
+      .json({ message: 'Error registering user', error: error.message })
   }
-});
+})
 
-// ✅ Player Data
+// app.get('/new-route', (req, res) => {
+//   res.send('This is the new route!');
+// });
+
+
+// fetch players from database
 app.get('/api/players', async (req, res) => {
   try {
     const [players] = await pool.query(`
@@ -88,20 +107,23 @@ app.get('/api/players', async (req, res) => {
         player.image_url
       FROM player
       LEFT JOIN club ON player.Cclub_id = club.Club_id
-      WHERE player.player_id NOT IN (SELECT player_id FROM owner_user_info)
+      LEFT JOIN agent ON player.agent_id = agent.Agent_id
+      LEFT JOIN user ON player.user_id = user.User_id
       ORDER BY player.player_id ASC;
     `);
+    console.log(players);
     res.status(200).json(players);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching player data', error: error.message });
   }
 });
 
-// ✅ Manager Data
+
+// fetch managers from database
 app.get('/api/managers', async (req, res) => {
   try {
     const [managers] = await pool.query(`
-      SELECT 
+        SELECT 
         Manager_id,
         Manager_pic_url,
         Name,
@@ -124,7 +146,7 @@ app.get('/api/managers', async (req, res) => {
   }
 });
 
-// ✅ Club Data
+// fetch clubs from database
 app.get('/api/clubs', async (req, res) => {
   try {
     const [clubs] = await pool.query(`
@@ -153,9 +175,6 @@ app.get('/api/clubs', async (req, res) => {
 
 
 
-
-
-// ✅ Start server
 app.listen(5000, () => {
-  console.log('Server started on port 5000');
-});
+  console.log('Server started on port 5000')
+})
