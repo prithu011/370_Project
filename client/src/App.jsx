@@ -1,29 +1,35 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 import {
-  BrowserRouter as Router,Routes,Route, Navigate,} from "react-router-dom";
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom'
 
-import FootballDashboard from "./components/Dashboard/FootballDashboard";
-import Login from "./components/UserManagment/Login";
-import Register from "./components/UserManagment/register";
-import Logout from "./components/UserManagment/Logout";
-import News from "./components/Transfer/News";
-import Layout from "./components/Dashboard/Layout";
-import PlayerList from "./components/Dashboard/sidebar/playerlist";
-import ManagerList from "./components/Dashboard/sidebar/ManagerList";
+import FootballDashboard from './components/Dashboard/FootballDashboard'
+import Login from './components/UserManagment/Login'
+import Register from './components/UserManagment/register'
+import Logout from './components/UserManagment/Logout'
+import News from './components/Transfer/News'
+import Layout from './components/Dashboard/Layout'
+import PlayerList from './components/Dashboard/sidebar/playerlist'
+import ManagerList from './components/Dashboard/sidebar/ManagerList'
+import ClubList from './components/Dashboard/sidebar/ClubList'
+import AdminPage from './components/admin/admin'
+// import AgentList from './components/Dashboard/sidebar/agent'
 
-import "./App.css";
-import ClubList from "./components/Dashboard/sidebar/ClubList";
+import './App.css'
 
 function App() {
-  const [backendData, setBackendData] = useState([{}]);
-  const [user, setUser] = useState(true); // true for now
-  const [showRegister, setShowRegister] = useState(false);
+  const [backendData, setBackendData] = useState([{}])
+  const [user, setUser] = useState(true) // true for now
+  const [showRegister, setShowRegister] = useState(false)
 
   useEffect(() => {
-    fetch("http://localhost:5000/api")
+    fetch('http://localhost:5000/api')
       .then((response) => response.json())
-      .then((data) => setBackendData(data));
-  }, []);
+      .then((data) => setBackendData(data))
+  }, [backendData, setBackendData])
 
   return (
     <Router>
@@ -77,16 +83,20 @@ function App() {
               path="/club"
               element={user ? <ClubList /> : <Navigate to="/" />}
             />
-            
-            
-            {/* Add more protected pages here later */}
+            {/* Admin Page Route */}
+            <Route
+              path="/admin"
+              element={user ? <AdminPage /> : <Navigate to="/" />}
+            />
+            {/* <Route
+              path="/Agent"
+              element={user ? <AgentList /> : <Navigate to="/" />}
+            /> */}
           </Route>
         </Routes>
       </div>
-
-
     </Router>
-  );
+  )
 }
 
-export default App;
+export default App
