@@ -169,9 +169,8 @@ const DashboardNavbar = () => {
       if (currentUser) {
         setUser({
           name: currentUser.email,
-          balance: '$1,250.00',
-        })
-        setUserEmail(currentUser.email) // Set the authenticated user's email
+          balance: "$1,250.00",
+        });
       } else {
         setUser(null)
         setUserEmail('') // Clear email if no user is logged in

@@ -19,6 +19,8 @@ const PlayerCard = ({ player, overallRating, onClose, mode = 'popup' }) => {
           <h2 className="position">{player.position}</h2>
           <h1 className="club-name">{player.club_name}</h1>
           <h1 className="player-name">{player.name}</h1>
+          <p>{player.club_name}</p>
+          <h2 className="player-name">{player.name}</h2>
           <div className="stars">★★★★★</div>
         </div>
       </div>

@@ -24,7 +24,6 @@ app.get('/api', (req, res) => {
   res.json({ users: ['userOne', 'userTwo', 'userThree'] })
 })
 
-// User login
 app.post('/api/login', async (req, res) => {
   try {
     const { email, role, name } = req.body
@@ -52,7 +51,6 @@ app.post('/api/logout', async (req, res) => {
   }
 })
 
-// Google login
 app.post('/api/google-login', async (req, res) => {
   const { email, name, role } = req.body
   try {
@@ -65,7 +63,6 @@ app.post('/api/google-login', async (req, res) => {
   }
 })
 
-// User registration
 app.post('/api/register', async (req, res) => {
   const { first, last, email, password } = req.body
   try {

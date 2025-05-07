@@ -38,7 +38,7 @@ function App() {
     <Router>
       <div className="app-container">
         <Routes>
-          {/* Authentication Routes (Login/Register/Logout) */}
+          {/* Authentication Routes */}
           <Route
             path="/"
             element={
@@ -60,15 +60,15 @@ function App() {
             }
           />
 
-          {/* Protected Routes with Navbar + Sidebar */}
+          {/* Protected Routes */}
           <Route element={<Layout />}>
             <Route
               path="/dashboard"
               element={user ? <FootballDashboard /> : <Navigate to="/" />}
             />
             <Route
-              path="/transfer"
-              element={user ? <News /> : <Navigate to="/" />}
+              path="/home"
+              element={user ? <FootballDashboard /> : <Navigate to="/" />}
             />
             <Route
               path="/player"
