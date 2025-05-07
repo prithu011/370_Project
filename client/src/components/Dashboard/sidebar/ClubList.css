@@ -39,7 +39,7 @@
     color: white; /* Ensure table data is white */
   }
   
-  .club-logo {
+  .club_name {
     width: 48px;
     height: 48px;
     object-fit: cover;

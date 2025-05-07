@@ -1,65 +1,76 @@
 import { useState, useEffect } from "react";
 import {
-  BrowserRouter as Router,Routes,Route, Navigate,} from "react-router-dom";
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 import FootballDashboard from "./components/Dashboard/FootballDashboard";
 import Login from "./components/UserManagment/Login";
 import Register from "./components/UserManagment/register";
 import Logout from "./components/UserManagment/Logout";
-import News from "./components/Transfer/News";
 import Layout from "./components/Dashboard/Layout";
 import PlayerList from "./components/Dashboard/sidebar/playerlist";
 import ManagerList from "./components/Dashboard/sidebar/ManagerList";
+import ClubList from "./components/Dashboard/sidebar/ClubList";
+// import Transfer from "./components/Transfer/Transfer";
+// import MyTeam from "./components/MyTeam/MyTeam";
 
 import "./App.css";
-import ClubList from "./components/Dashboard/sidebar/ClubList";
 
 function App() {
-  const [backendData, setBackendData] = useState([{}]);
-  const [user, setUser] = useState(true); // true for now
+  const [user, setUser] = useState(null); // null by default
   const [showRegister, setShowRegister] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api")
-      .then((response) => response.json())
-      .then((data) => setBackendData(data));
+    // Optional: Auto-fetch user session from localStorage or backend
   }, []);
 
   return (
     <Router>
       <div className="app-container">
         <Routes>
-          {/* Authentication Routes (Login/Register/Logout) */}
+          {/* Authentication Routes */}
           <Route
             path="/"
             element={
               user ? (
-                showRegister ? (
-                  <Register
-                    onRegister={setUser}
-                    onSwitch={() => setShowRegister(false)}
-                  />
-                ) : (
-                  <Login
-                    onLogin={setUser}
-                    onSwitch={() => setShowRegister(true)}
-                  />
-                )
+                <Navigate to="/dashboard" />
+              ) : showRegister ? (
+                <Register
+                  onRegister={(userData) => {
+                    setUser(userData);
+                    setShowRegister(false);
+                  }}
+                  onSwitch={() => setShowRegister(false)}
+                />
               ) : (
-                <Logout onLogout={() => setUser(null)} user={user} />
+                <Login
+                  onLogin={(userData) => {
+                    setUser(userData);
+                    setShowRegister(false);
+                  }}
+                  onSwitch={() => setShowRegister(true)}
+                />
               )
             }
           />
 
-          {/* Protected Routes with Navbar + Sidebar */}
+          <Route
+            path="/logout"
+            element={<Logout onLogout={() => setUser(null)} user={user} />}
+          />
+
+          {/* Protected Routes */}
           <Route element={<Layout />}>
             <Route
               path="/dashboard"
               element={user ? <FootballDashboard /> : <Navigate to="/" />}
             />
             <Route
-              path="/transfer"
-              element={user ? <News /> : <Navigate to="/" />}
+              path="/home"
+              element={user ? <FootballDashboard /> : <Navigate to="/" />}
             />
             <Route
               path="/player"
@@ -70,21 +81,20 @@ function App() {
               element={user ? <ManagerList /> : <Navigate to="/" />}
             />
             <Route
-              path="/home"
-              element={user ? <FootballDashboard /> : <Navigate to="/" />}
-            />
-            <Route
               path="/club"
               element={user ? <ClubList /> : <Navigate to="/" />}
             />
-            
-            
-            {/* Add more protected pages here later */}
+            {/* <Route
+              path="/transfer"
+              element={user ? <Transfer /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/MyTeam"
+              element={user ? <MyTeam /> : <Navigate to="/" />}
+            /> */}
           </Route>
         </Routes>
       </div>
-
-
     </Router>
   );
 }

@@ -16,7 +16,7 @@ const PlayerCard = ({ player, onClose, mode = "popup" }) => {
         <div className="overlay">
           <h2 className="rating bg-red">Overall Rating: {randomRating}</h2>
           <h2 className="position">{player.position}</h2>
-          <img src={player.club_logo} alt={player.club_name} className="club-logo" />
+          <p>{player.club_name}</p>
           <h2 className="player-name">{player.name}</h2>
           <div className="stars">★★★★★</div>
         </div>

@@ -15,7 +15,7 @@ const DashboardNavbar = () => {
       if (currentUser) {
         setUser({
           name: currentUser.email,
-          balance: "$1,250.00",
+          balance: "",
         });
       } else {
         setUser(null);
