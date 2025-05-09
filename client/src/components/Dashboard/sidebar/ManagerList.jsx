@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import './ManagerList.css' // Assuming you have a CSS file for styling
+import { useAuth, useIsAdmin } from '../../AuthContext'
 
-const ManagerList = () => {
+const ManagerList = ({ showBuyButton, onBuy, userBalance }) => {
   const [managers, setManagers] = useState([])
   const [filters, setFilters] = useState({
     name: '',
@@ -10,6 +11,8 @@ const ManagerList = () => {
     age: '',
     market_value: '',
   })
+  const { currentUser } = useAuth()
+  const isAdmin = useIsAdmin()
 
   useEffect(() => {
     const fetchManagers = async () => {
@@ -106,6 +109,7 @@ const ManagerList = () => {
             <th>Approved</th>
             <th>Transfer ID</th>
             <th>Trophies</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -127,11 +131,32 @@ const ManagerList = () => {
                 <td>{manager.is_approved_by_manager ? 'Yes' : 'No'}</td>
                 <td>{manager.manager_tran_id}</td>
                 <td>{manager.manager_trophies}</td>
+                <td className="action-buttons flex flex-row gap-2">
+                  {isAdmin && (
+                    <div className="admin-buttons flex flex-row gap-2">
+                      <button className="view-button">Update</button>
+                      <button className="view-button">Delete</button>
+                    </div>
+                  )}
+                  {showBuyButton && (
+                    <button
+                      className={`px-4 py-2 rounded ${
+                        userBalance >= manager.market_value
+                          ? 'bg-green-500 hover:bg-green-600'
+                          : 'bg-gray-400'
+                      } text-white`}
+                      onClick={() => onBuy(manager)}
+                      disabled={userBalance < manager.market_value}
+                    >
+                      Buy for €{manager.market_value?.toLocaleString()}
+                    </button>
+                  )}
+                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="13" style={{ textAlign: 'center' }}>
+              <td colSpan="14" style={{ textAlign: 'center' }}>
                 No managers found
               </td>
             </tr>

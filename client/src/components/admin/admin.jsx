@@ -8,13 +8,12 @@ import LeagueList from '../Dashboard/sidebar/league'
 
 import './admin.css'
 
-const AdminPage = ({ props: x }) => {
+const AdminPage = () => {
   const [selectedTable, setSelectedTable] = useState(null)
   const [tableData, setTableData] = useState([])
   const [userEmail, setUserEmail] = useState('')
   const [updatedRow, setUpdatedRow] = useState({})
   const [editingRowId, setEditingRowId] = useState(null)
-  console.log(x)
 
   const isAdmin = [
     'tanjum.ibnul.mahmud@g.bracu.ac.bd',

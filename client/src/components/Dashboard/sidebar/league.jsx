@@ -53,7 +53,7 @@ const LeagueList = () => {
             </tr>
           </thead>
           <tbody className="table-body">
-            {filteredLeagues.map((league) => (
+            {filteredLeagues.map((league, jhjhg) => (
               <tr key={league.League_id}>
                 <td>{league.name || 'N/A'}</td>
                 <td>{league.Most_goals || 'N/A'}</td>

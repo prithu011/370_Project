@@ -1,7 +1,11 @@
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const { addUser, updateUserSession } = require('./Database/models/user')
+const {
+  addUser,
+  updateUserSession,
+  buyItem,
+} = require('./Database/models/user')
 const fetchPlayers = require('./fetchingData/fetchPlayers')
 const fetchClubs = require('./fetchingData/fetchClubs')
 const fetchManagers = require('./fetchingData/fetchManagers')
@@ -29,7 +33,12 @@ app.post('/api/login', async (req, res) => {
     const { email, role, name } = req.body
     console.log(req.body)
 
-    const user = await addUser(email, role, name || email)
+    const user = await addUser(
+      email,
+      role,
+      name,
+      (balance = 10000000000 || email)
+    )
     res.status(200).json({ message: 'User logged in', user })
   } catch (error) {
     res
@@ -66,7 +75,9 @@ app.post('/api/google-login', async (req, res) => {
 app.post('/api/register', async (req, res) => {
   const { first, last, email, password } = req.body
   try {
-    const user = await addUser(email, 'user', `${first} ${last}`)
+    const user = await addUser(email, 'user', `${first} ${last}`, {
+      balance: 10000000000000,
+    })
     res.status(201).json({ message: 'User registered successfully', user })
   } catch (error) {
     res
@@ -88,6 +99,26 @@ app.get('/api/managers', fetchManagers)
 app.use('/api/admin', adminRoutes)
 
 app.get('/api/leagues', fetchLeague)
+
+// ...existing code...
+const transferRoutes = require('./routes/transferRoutes')
+app.use('/api/transfer', transferRoutes)
+// ...existing code...
+app.post('/api/buy', async (req, res) => {
+  const { userId, itemId, itemType, price } = req.body
+  console.log(userId, itemId, itemType, price)
+
+  try {
+    const user = await buyItem(userId, itemId, itemType, price)
+    res.status(200).json({ message: 'Player bought successfully' })
+  } catch (error) {
+    console.log(error)
+
+    res
+      .status(500)
+      .json({ message: 'Error buying player', error: error.message })
+  }
+})
 
 // // Route for fetching agent data
 // app.get('/api/agents', fetchAgents)

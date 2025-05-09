@@ -57,4 +57,47 @@ const fetchUsers = async () => {
   }
 }
 
-module.exports = { addUser, updateUserSession, fetchUsers, pool }
+const buyItem = async (userId, itemId, itemType, price) => {
+  console.log(userId, itemId, itemType, price)
+
+  const connection = await pool.getConnection()
+  try {
+    await connection.beginTransaction()
+
+    // Check user's balance
+    // const [userBalance] = await connection.query(
+    //   'SELECT balance FROM user WHERE User_id = ?',
+    //   [userId]
+    // )
+
+    // if (!userBalance[0] || userBalance[0].balance < price) {
+    //   throw new Error('Insufficient funds')
+    // }
+
+    // // Update user's balance
+    // await connection.query(
+    //   'UPDATE user SET balance = balance - ? WHERE User_id = ?',
+    //   [price, userId]
+    // )
+
+    // Add to owner_user_info table
+    await connection.query(
+      'INSERT INTO owner_user_info (UUser_id,player_id, manager_id) VALUES (?, ?, ?)',
+      [
+        userId,
+        itemType === 'player' ? itemId : null,
+        itemType === 'manager' ? itemId : null,
+      ]
+    )
+
+    await connection.commit()
+    return { success: true }
+  } catch (error) {
+    await connection.rollback()
+    throw error
+  } finally {
+    connection.release()
+  }
+}
+
+module.exports = { addUser, updateUserSession, fetchUsers, pool, buyItem }

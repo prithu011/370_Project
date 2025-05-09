@@ -1,137 +1,107 @@
-import React, { useState } from 'react'
-import { FaEye, FaEyeSlash, FaGoogle, FaFacebook } from 'react-icons/fa'
-import {
-  auth,
-  googleProvider,
-  facebookProvider,
-  signInWithPopup,
-} from '../../firebaseConfig'
+import React, { useState, useCallback } from 'react'
+import { FaEye, FaEyeSlash, FaGoogle } from 'react-icons/fa'
+import { auth, provider, signInWithPopup } from '../../firebaseConfig'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 import API_BASE_URL from '../../config'
+import { useAuth } from '../AuthContext'
 
-const useInterval = (callback, delay) => {
-  const savedCallback = React.useRef()
-  React.useEffect(() => {
-    savedCallback.current = callback
-  }, [callback])
-
-  React.useEffect(() => {
-    if (delay !== null) {
-      const id = setInterval(() => savedCallback.current(), delay)
-      return () => clearInterval(id)
-    }
-  }, [delay])
-}
-
-const Login = ({ onLogin, onSwitch }) => {
+const Login = ({ onSwitch }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [role, setRole] = useState('user')
-  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
-  // Update the handleLogin function
-  const handleLogin = async () => {
+  const { currentUser, updateCurrentUser } = useAuth()
+  const navigate = useNavigate()
+  const handleLogin = useCallback(async () => {
     if (!email || !password) {
-      alert('Please enter both email and password.')
+      setError('Please enter both email and password.')
       return
     }
 
     try {
+      setLoading(true)
+      setError(null)
+
       const details = {
         email,
         password,
         role,
         name: email,
       }
+
       const response = await axios.post(`${API_BASE_URL}/api/login`, details)
+      console.log(response.data)
+
       const userData = response.data.user
+      console.log(userData)
 
-      // Store email in localStorage
-      localStorage.setItem('userEmail', userData.email)
-
+      // Let AuthContext handle the user state
       auth.currentUser = {
         displayName: userData.name || userData.email || 'User',
         email: userData.email,
       }
-
-      onLogin(userData)
-      setUser(auth.currentUser)
-      console.log('Login successful:', userData)
-      window.open('/dashboard', '_self')
+      updateCurrentUser(userData)
+      localStorage.setItem('user', JSON.stringify(userData))
+      navigate('/dashboard')
     } catch (error) {
-      console.error(
-        'Login error:',
-        error.response?.data?.message || error.message
+      console.error('Login error:', error)
+      setError(
+        error.response?.data?.message || 'Login failed. Please try again.'
       )
-      alert('Login failed. Please try again.')
+    } finally {
+      setLoading(false)
     }
-  }
+  }, [email, password, role, updateCurrentUser])
 
-  // Update Google login to store email
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = useCallback(async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider)
+      setLoading(true)
+      setError(null)
+
+      const result = await signInWithPopup(auth, provider)
       const googleUser = result.user
-      const userData = {
+
+      const res = await axios.post(`${API_BASE_URL}/api/google-login`, {
         email: googleUser.email,
-        name: googleUser.email,
+        name: googleUser.displayName,
         role,
-      }
+      })
+      console.log('google', res.data)
 
-      // Store email in localStorage
-      localStorage.setItem('userEmail', googleUser.email)
-
-      await axios.post(`${API_BASE_URL}/api/google-login`, userData)
-      setUser(googleUser)
-      onLogin(userData)
-      console.log('Google login successful:', userData)
-      window.open('/dashboard', '_self')
+      updateCurrentUser(res.data.user)
+      localStorage.setItem('user', JSON.stringify(res.data.user))
+      navigate('/dashboard')
     } catch (error) {
-      console.error(
-        'Google login error:',
-        error.response?.data?.message || error.message
-      )
-      alert('Google login failed. Please try again.')
+      console.error('Google login error:', error)
+      setError('Google login failed. Please try again.')
+    } finally {
+      setLoading(false)
     }
-  }
+  }, [role, updateCurrentUser])
 
-  const handleFacebookLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, facebookProvider)
-      const fbUser = result.user
-      const userData = {
-        email: fbUser.email,
-        name: fbUser.email,
-        role,
-      }
-      setUser(fbUser)
-      onLogin(userData)
-      window.open('/dashboard', '_self')
-    } catch (error) {
-      console.error('Facebook login error:', error.message)
-      window.open('/', '_self')
-    }
+  // Redirect if already logged in
+  if (currentUser) {
+    navigate('/dashboard')
+    return null
   }
-
-  useInterval(
-    () => {
-      if (user) {
-        console.log(`Checking session for ${user.displayName}`)
-      }
-    },
-    user ? 10000 : null
-  )
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="login-card flex flex-col justify-center align-middle gap-4">
         <h2>LOGIN</h2>
+        {error && (
+          <div className="error-message text-red-500 text-sm">{error}</div>
+        )}
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
         />
         <div className="password-wrapper">
           <input
@@ -139,6 +109,7 @@ const Login = ({ onLogin, onSwitch }) => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={loading}
           />
           <span
             className="eye-icon"
@@ -154,6 +125,7 @@ const Login = ({ onLogin, onSwitch }) => {
             className="ml-2 border p-1 rounded"
             value={role}
             onChange={(e) => setRole(e.target.value)}
+            disabled={loading}
           >
             <option value="user">User</option>
             <option value="agent">Agent</option>
@@ -161,22 +133,25 @@ const Login = ({ onLogin, onSwitch }) => {
           </select>
         </div>
 
-        <button className="btn login-btn" onClick={handleLogin}>
-          Login
-        </button>
         <button
-          className="btn google flex flex-row gap-12"
+          className={`btn login-btn ${
+            loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+          onClick={handleLogin}
+          disabled={loading}
+        >
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+
+        <button
+          className={`btn google flex flex-row gap-12 ${
+            loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
           onClick={handleGoogleLogin}
+          disabled={loading}
         >
           <FaGoogle className="mt-1" />
-          Login with Google
-        </button>
-        <button
-          className="btn facebook flex flex-row gap-12"
-          onClick={handleFacebookLogin}
-        >
-          <FaFacebook className="mt-1" />
-          Login with Facebook
+          {loading ? 'Connecting...' : 'Login with Google'}
         </button>
 
         <div className="footer-links">
@@ -188,4 +163,4 @@ const Login = ({ onLogin, onSwitch }) => {
   )
 }
 
-export default Login
+export default React.memo(Login)

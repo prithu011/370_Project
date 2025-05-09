@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, memo } from 'react'
 import axios from 'axios'
 import './playerList.css'
 import PlayerCard from '../../playercard/playercard'
+import { useAuth, useIsAdmin, useCurrentUser } from '../../AuthContext'
 
 // Memoized filter component
 const PlayerFilters = memo(({ filters, onFilterChange }) => (
@@ -71,8 +72,10 @@ const PlayerFilters = memo(({ filters, onFilterChange }) => (
   </div>
 ))
 
-const PlayerList = () => {
+const PlayerList = ({ showBuyButton, onBuy, userBalance, apiUrl }) => {
   const [players, setPlayers] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
   const [selectedPlayer, setSelectedPlayer] = useState(null)
   const [overallRating, setOverallRating] = useState(null)
   const [filters, setFilters] = useState({
@@ -87,16 +90,29 @@ const PlayerList = () => {
 
   const fetchPlayers = useCallback(async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/players')
+      setLoading(true)
+      setError(null)
+      const res = await axios.get(apiUrl || 'http://localhost:5000/api/players')
+      console.log('Fetched players:', res.data) // Debug log
       setPlayers(res.data)
     } catch (err) {
       console.error('Error fetching players:', err)
+      setError('Failed to fetch players')
+    } finally {
+      setLoading(false)
     }
-  }, [])
+  }, [apiUrl])
 
   useEffect(() => {
     fetchPlayers()
   }, [fetchPlayers])
+
+  const isAdmin = useIsAdmin()
+  const User = useCurrentUser()
+  const { currentUser } = useAuth()
+  console.log('Current User:', currentUser)
+  console.log('Is Admin:', isAdmin)
+  console.log('User:', User)
 
   const handleFilterChange = useCallback((field, value) => {
     setFilters((prev) => ({
@@ -137,88 +153,119 @@ const PlayerList = () => {
   return (
     <div className="player-list-container">
       <h1 className="player-list-title">All Players</h1>
-      <PlayerFilters filters={filters} onFilterChange={handleFilterChange} />
+      {error && <div className="error-message text-red-500">{error}</div>}
+      {loading ? (
+        <div className="loading text-center py-4">Loading players...</div>
+      ) : (
+        <>
+          <PlayerFilters
+            filters={filters}
+            onFilterChange={handleFilterChange}
+          />
 
-      <div className="table-container">
-        <table className="table-auto">
-          <thead className="table-header">
-            <tr>
-              <th>Image</th>
-              <th>Name</th>
-              <th>Position</th>
-              <th>Nationality</th>
-              <th>Jersey</th>
-              <th>Age</th>
-              <th>Foot</th>
-              <th>Club</th>
-              <th>Matches</th>
-              <th>Goals</th>
-              <th>Assists</th>
-              <th>Pen Goals</th>
-              <th>Yellow</th>
-              <th>Red</th>
-              <th>Trophies</th>
-              <th>Market Value</th>
-              <th>Contract</th>
-              <th>Free Agent?</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody className="table-body">
-            {filteredPlayers.map((player) => (
-              <tr key={player.player_id}>
-                <td>
-                  <img
-                    src={player.image_url}
-                    alt={player.name}
-                    className="table-image"
-                  />
-                </td>
-                <td>{player.name || 'N/A'}</td>
-                <td>{player.position || 'N/A'}</td>
-                <td>{player.player_nationality || 'N/A'}</td>
-                <td>{player.player_jersey || 'N/A'}</td>
-                <td>{player.age || 'N/A'}</td>
-                <td>{player.foot || 'N/A'}</td>
-                <td>{player.club_name || 'N/A'}</td>
-                <td>{player.matches || 'N/A'}</td>
-                <td>{player.goals || 'N/A'}</td>
-                <td>{player.assists || 'N/A'}</td>
-                <td>{player.pen_goal || '0'}</td>
-                <td>{player.yellow_card || 'N/A'}</td>
-                <td>{player.red_card || '0'}</td>
-                <td>{player.player_trophies || 'N/A'}</td>
-                <td>{player.market_value || 'N/A'}</td>
-                <td>{player.contract_period || 'N/A'}</td>
-                <td>{player.is_free_agent ? 'Yes' : 'No'}</td>
-                <td className="action-buttons">
-                  <button
-                    className="view-button"
-                    onClick={() => handleViewPlayer(player)}
-                  >
-                    View
-                  </button>
-                  <button
-                    className="view-button"
-                    onClick={() => handleViewPlayer(player)}
-                  >
-                    Update
-                  </button>
-                  <button
-                    className="view-button"
-                    onClick={() => handleViewPlayer(player)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          <div className="table-container">
+            <table className="table-auto">
+              <thead className="table-header">
+                <tr>
+                  <th>Image</th>
+                  <th>Name</th>
+                  <th>Position</th>
+                  <th>Nationality</th>
+                  <th>Jersey</th>
+                  <th>Age</th>
+                  <th>Foot</th>
+                  <th>Club</th>
+                  <th>Matches</th>
+                  <th>Goals</th>
+                  <th>Assists</th>
+                  <th>Pen Goals</th>
+                  <th>Yellow</th>
+                  <th>Red</th>
+                  <th>Trophies</th>
+                  <th>Market Value</th>
+                  <th>Contract</th>
+                  <th>Free Agent?</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody className="table-body">
+                {filteredPlayers.map((player) => (
+                  <tr key={player.player_id}>
+                    <td>
+                      <img
+                        src={player.image_url}
+                        alt={player.name}
+                        className="table-image"
+                      />
+                    </td>
+                    <td>{player.name || 'N/A'}</td>
+                    <td>{player.position || 'N/A'}</td>
+                    <td>{player.player_nationality || 'N/A'}</td>
+                    <td>{player.player_jersey || 'N/A'}</td>
+                    <td>{player.age || 'N/A'}</td>
+                    <td>{player.foot || 'N/A'}</td>
+                    <td>{player.club_name || 'N/A'}</td>
+                    <td>{player.matches || 'N/A'}</td>
+                    <td>{player.goals || 'N/A'}</td>
+                    <td>{player.assists || 'N/A'}</td>
+                    <td>{player.pen_goal || '0'}</td>
+                    <td>{player.yellow_card || 'N/A'}</td>
+                    <td>{player.red_card || '0'}</td>
+                    <td>{player.player_trophies || 'N/A'}</td>
+                    <td>{player.market_value || 'N/A'}</td>
+                    <td>{player.contract_period || 'N/A'}</td>
+                    <td>{player.is_free_agent ? 'Yes' : 'No'}</td>
+                    <td className="action-buttons flex flex-row gap-2">
+                      <button
+                        className="view-button"
+                        onClick={() => handleViewPlayer(player)}
+                      >
+                        View
+                      </button>
+                      {isAdmin ? (
+                        <div className="admin-buttons flex flex-row gap-2">
+                          <button
+                            className="view-button"
+                            onClick={() => handleViewPlayer(player)}
+                          >
+                            Update
+                          </button>
+                          <button
+                            className="view-button"
+                            onClick={() => handleViewPlayer(player)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      ) : null}
+                      {showBuyButton && (
+                        <button
+                          className={`px-4 py-2 rounded ${
+                            userBalance >= player.market_value
+                              ? 'bg-green-500 hover:bg-green-600'
+                              : 'bg-gray-400'
+                          } text-white`}
+                          onClick={() => onBuy(player)}
+                          disabled={userBalance < player.market_value}
+                        >
+                          Buy for {player.market_value?.toLocaleString()}
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
 
       {selectedPlayer && (
-        <div className="popup-overlay" onClick={() => setSelectedPlayer(null)}>
+        <div>
+          <div
+            className="popup-overlay"
+            onClick={() => setSelectedPlayer(null)}
+          ></div>
           <div className="popup-content" onClick={(e) => e.stopPropagation()}>
             <PlayerCard
               player={selectedPlayer}

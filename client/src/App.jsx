@@ -10,13 +10,16 @@ import FootballDashboard from './components/Dashboard/FootballDashboard'
 import Login from './components/UserManagment/Login'
 import Register from './components/UserManagment/register'
 import Logout from './components/UserManagment/Logout'
-import News from './components/Transfer/News'
+// import News from './components/Transfer/News'
 import Layout from './components/Dashboard/Layout'
 import PlayerList from './components/Dashboard/sidebar/playerlist'
 import ManagerList from './components/Dashboard/sidebar/ManagerList'
 import ClubList from './components/Dashboard/sidebar/ClubList'
 import AdminPage from './components/admin/admin'
 import League from './components/Dashboard/sidebar/league'
+import { useIsAdmin } from './components/AuthContext'
+import Transfer from './components/Transfer/Transfer'
+import MyTeam from './components/MyTeam/MyTeam'
 
 // import AgentList from './components/Dashboard/sidebar/agent'
 
@@ -27,6 +30,7 @@ function App() {
   const [backendData, setBackendData] = useState([{}])
   const [user, setUser] = useState(true) // true for now
   const [showRegister, setShowRegister] = useState(false)
+  const isAdmin = useIsAdmin()
 
   useEffect(() => {
     fetch('http://localhost:5000/api')
@@ -90,10 +94,18 @@ function App() {
               path="/club"
               element={user ? <ClubList /> : <Navigate to="/" />}
             />
+            <Route
+              path="/transfer"
+              element={user ? <Transfer /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/myteam"
+              element={user ? <MyTeam /> : <Navigate to="/" />}
+            />
             {/* Admin Page Route */}
             <Route
               path="/admin"
-              element={user ? <AdminPage /> : <Navigate to="/" />}
+              element={isAdmin ? <AdminPage /> : <Navigate to="/" />}
             />
             {/* <Route
               path="/Agent"
