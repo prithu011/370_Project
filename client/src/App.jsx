@@ -1,33 +1,120 @@
-import { useState,useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom'
+
+import FootballDashboard from './components/Dashboard/FootballDashboard'
+import Login from './components/UserManagment/Login'
+import Register from './components/UserManagment/register'
+import Logout from './components/UserManagment/Logout'
+// import News from './components/Transfer/News'
+import Layout from './components/Dashboard/Layout'
+import PlayerList from './components/Dashboard/sidebar/playerlist'
+import ManagerList from './components/Dashboard/sidebar/ManagerList'
+import ClubList from './components/Dashboard/sidebar/ClubList'
+import AdminPage from './components/admin/admin'
+import League from './components/Dashboard/sidebar/league'
+import { useIsAdmin } from './components/AuthContext'
+import Transfer from './components/Transfer/Transfer'
+import MyTeam from './components/MyTeam/MyTeam'
+
+// import AgentList from './components/Dashboard/sidebar/agent'
+
 import './App.css'
-import FootballDashboard from './components/FootballDashboard'
 
 function App() {
+  // eslint-disable-next-line no-unused-vars
   const [backendData, setBackendData] = useState([{}])
-  
-    useEffect(() => {
-      fetch('http://localhost:5000/api')
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          
-          setBackendData(data)
-        })
-    }, [])
+  const [user, setUser] = useState(true) // true for now
+  const [showRegister, setShowRegister] = useState(false)
+  const isAdmin = useIsAdmin()
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api')
+      .then((response) => response.json())
+      .then((data) => setBackendData(data))
+  }, [])
 
   return (
-    <>
-     <div>
-      {typeof backendData.users === 'undefined' ? (
-        <p>Loading...</p>
-      ) : (
-        backendData.users.map((user, i) => <p key={i}>{user}</p>)
-      )}
-    </div>
-    <FootballDashboard />
-    </>
+    <Router>
+      <div className="app-container">
+        <Routes>
+          {/* Authentication Routes */}
+          <Route
+            path="/"
+            element={
+              user ? (
+                showRegister ? (
+                  <Register
+                    onRegister={setUser}
+                    onSwitch={() => setShowRegister(false)}
+                  />
+                ) : (
+                  <Login
+                    onLogin={setUser}
+                    onSwitch={() => setShowRegister(true)}
+                  />
+                )
+              ) : (
+                <Logout onLogout={() => setUser(null)} user={user} />
+              )
+            }
+          />
+
+          {/* Protected Routes */}
+          <Route element={<Layout />}>
+            <Route
+              path="/dashboard"
+              element={user ? <FootballDashboard /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/home"
+              element={user ? <FootballDashboard /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/player"
+              element={user ? <PlayerList /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/manager"
+              element={user ? <ManagerList /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/league"
+              element={user ? <League /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/home"
+              element={user ? <FootballDashboard /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/club"
+              element={user ? <ClubList /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/transfer"
+              element={user ? <Transfer /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/myteam"
+              element={user ? <MyTeam /> : <Navigate to="/" />}
+            />
+            {/* Admin Page Route */}
+            <Route
+              path="/admin"
+              element={isAdmin ? <AdminPage /> : <Navigate to="/" />}
+            />
+            {/* <Route
+              path="/Agent"
+              element={user ? <AgentList /> : <Navigate to="/" />}
+            /> */}
+          </Route>
+        </Routes>
+      </div>
+    </Router>
   )
 }
 
